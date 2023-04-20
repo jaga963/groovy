@@ -1,0 +1,25 @@
+pipeline{
+    agent any
+    stages {
+        stage('git clone'){
+            steps {
+            checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/kliakos/sparkjava-war-example.git']]])
+            }
+        }
+        stage('Maven Build'){
+            steps{
+            sh 'mvn package'
+            }
+        }
+        stage('Artifact Upload'){
+            steps{
+            nexusArtifactUploader artifacts: [[artifactId: 'sparkjava-hello-world-', classifier: '', file: 'target/sparkjava-hello-world-1.0.war', type: 'war']], credentialsId: 'jaga-nexus', groupId: 'sparkjava-hello-world', nexusUrl: '13.231.237.7:8081/nexus', nexusVersion: 'nexus2', protocol: 'http', repository: 'jaga', version: '1.0'
+            }
+        }
+        stage('Deploy to Tomcat'){
+            steps{
+            deploy adapters: [tomcat7(credentialsId: 'Tomcat', path: '', url: 'http://43.207.103.79:8080/')], contextPath: 'SPARK', war: '**/*.war'
+            }
+        }
+    }
+}
