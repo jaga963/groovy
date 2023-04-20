@@ -1,6 +1,6 @@
 pipeline{
     options{
-    ([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '2', numToKeepStr: '3')), pipelineTriggers([cron('* * * * *')])])
+    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '2', numToKeepStr: '3')), (pipelineTriggers([cron('* * * * *')]))
     }
     agent any
     stages {
